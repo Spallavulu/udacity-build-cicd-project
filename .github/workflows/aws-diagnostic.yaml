@@ -1,0 +1,49 @@
+name: AWS Read Only Diagnostic
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Check AWS identity
+        run: |
+          echo "=== AWS IDENTITY ==="
+          aws sts get-caller-identity
+
+      - name: Check EKS cluster
+        run: |
+          echo "=== EKS CLUSTER ==="
+          aws eks describe-cluster \
+            --name cluster \
+            --region us-east-1 \
+            --query 'cluster.{name:name,status:status,version:version}' \
+            --output table
+
+      - name: Check EKS node group
+        run: |
+          echo "=== EKS NODE GROUP ==="
+          aws eks describe-nodegroup \
+            --cluster-name cluster \
+            --nodegroup-name udacity \
+            --region us-east-1 \
+            --query 'nodegroup.{name:nodegroupName,status:status,desired:scalingConfig.desiredSize,min:scalingConfig.minSize,max:scalingConfig.maxSize}' \
+            --output table
+
+      - name: Check ECR repositories
+        run: |
+          echo "=== ECR REPOSITORIES ==="
+          aws ecr describe-repositories \
+            --repository-names backend frontend \
+            --region us-east-1 \
+            --query 'repositories[].{name:repositoryName,uri:repositoryUri}' \
+            --output table
