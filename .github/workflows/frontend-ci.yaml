@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - frontend-ci
-      - master
+      - main
     paths:
       - "starter/frontend/**"
       - ".github/workflows/frontend-ci.yaml"
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - "starter/frontend/**"
       - ".github/workflows/frontend-ci.yaml"
