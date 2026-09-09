@@ -24,6 +24,7 @@ jobs:
           aws sts get-caller-identity
 
       - name: Check EKS cluster
+        continue-on-error: true
         run: |
           echo "=== EKS CLUSTER ==="
           aws eks describe-cluster \
@@ -33,6 +34,7 @@ jobs:
             --output table
 
       - name: Check EKS node group
+        continue-on-error: true
         run: |
           echo "=== EKS NODE GROUP ==="
           aws eks describe-nodegroup \
@@ -43,6 +45,7 @@ jobs:
             --output table
 
       - name: Check ECR repositories
+        continue-on-error: true
         run: |
           echo "=== ECR REPOSITORIES ==="
           aws ecr describe-repositories \
